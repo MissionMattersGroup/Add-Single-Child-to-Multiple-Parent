@@ -1,0 +1,285 @@
+<apex:page controller="AddChildForMultipleParentController" action="{!viewFieldSetForParentChild}" tabStyle="Bulk_Entry_Settings__c" id="thePageId">
+    <head>
+    <style>
+    <apex:stylesheet value="{!URLFOR($Resource.MissionMatters, 'css/dataTables.css')}"/> 
+    <apex:stylesheet value="https://cdn.datatables.net/1.10.3/css/jquery.dataTables.css"/>
+   
+   
+    <apex:stylesheet value="https://code.jquery.com/ui/1.10.3/jquery-ui.js"/>
+    <apex:stylesheet value="https://code.jquery.com/jquery-1.11.1.min.js"/>
+    <apex:stylesheet value="https://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"/>
+    <apex:stylesheet value="https://cdn.datatables.net/tabletools/2.2.3/js/dataTables.tableTools.min.js"/>
+    <apex:stylesheet value="https://editor.datatables.net/media/js/dataTables.editor.min.js"/>
+    <apex:includeScript value="{!URLFOR($Resource.MissionMatters, 'js/jquery.js')}"/>     
+    <apex:includeScript value="{!URLFOR($Resource.MissionMatters, 'js/jquery.dataTables.js')}"/ >
+    <apex:includeScript value="{!URLFOR($Resource.MissionMatters, 'js/jquery.dataTables.min.js')}"/>  
+ 
+    .sorting {
+        background: #f2f3f3 url('{! URLFOR($Resource.MissionMatters, 'images/sort_both.png') }') no-repeat center right !important;
+        padding-right: 20px !important;
+    }
+    .sorting_asc {
+        background: #f2f3f3 url('{! URLFOR($Resource.MissionMatters, 'images/sort_asc.png') }') no-repeat center right !important;
+        padding-right: 20px !important;
+    }
+    .sorting_desc {
+        background: #f2f3f3 url('{! URLFOR($Resource.MissionMatters, 'images/sort_desc.png') }') no-repeat center right !important;
+        padding-right: 20px !important;
+    }
+    .sorting_asc_disabled {
+        background: #f2f3f3 url('{! URLFOR($Resource.MissionMatters, 'images/sort_asc_disabled.png') }') no-repeat center right !important;
+        padding-right: 20px !important;
+    }
+    .sorting_desc_disabled {
+        background: #f2f3f3 url('{! URLFOR($Resource.MissionMatters, 'images/sort_desc_disabled.png') }') no-repeat center right !important;
+        padding-right: 20px !important;
+    }
+       #assign-action-spinner-main {
+            position: fixed;
+            left: 0;
+            top: 0;
+            background-color:rgba(0,0,0,.6);
+            height: 100%;
+            width: 100%;
+            z-index: 999;
+            align: center;
+            vertical-align: middle;
+        }
+        #assign-action-spinner-content {
+            position: absolute; 
+            top: 50%;
+            left: 50%;
+            z-index: 1000;
+            background-color: #F5FCFF;
+            width: 204;
+            height: 94; 
+            border-radius: 1em;
+            border: 1px solid #CEECFF;
+            padding: 20px 40px 20px 40px;
+            margin-left: -116px;
+            margin-top: -36px;
+        }
+        #assign-action-spinner-content img {
+            width: 32;
+            height: 32;
+            align: center;
+            vertical-align: middle;
+        }
+        
+        #assign-action-spinner-content p {
+            display: inline;
+            font-size: 135%;
+            font-weight: bold;
+        }     
+    </style>
+    
+     <script>
+        
+        /* javascript  function to change all checkbox on check/unchack of single checkbox.*/
+        function selectAllCheckboxes(obj,receivedInputID){
+            var inputCheckBox = document.getElementsByTagName("input");
+            for(var i=0; i<inputCheckBox.length; i++){
+                if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){
+                    inputCheckBox[i].checked = obj.checked;
+                }
+            }
+        }
+        
+         /* javascript  function to uncheck a checkbox on click of next link on page.*/
+        function DeselectCheckBoxOnNextPage() {
+            var selectedInputCheckBox = document.getElementById('thePageId:formId:thePageBlock:RecordSelectionRegionId:theTableId:inputcheckId');
+            if(selectedInputCheckBox.checked) {
+                selectedInputCheckBox.checked = false;
+            }
+        }
+        
+        
+        
+    </script> 
+    </head>
+    
+    <apex:sectionHeader title="{!strTitle}" subtitle="{!strSubtitle}" />
+    
+    <apex:form id="formId">
+    
+        <apex:outputpanel >
+            <apex:actionStatus id="statusBar" layout="block">
+               <apex:facet name="start">
+                 <div id="assign-action-spinner-main">
+                    <div id="assign-action-spinner-content">
+                    <img src="/img/analytics/reportbuilder/icons/spinner32.gif" alt="Processing..." title="Processing..." /> 
+                    <p>Processing...</p>
+                 </div>
+                </div>
+              </apex:facet>
+            </apex:actionStatus>
+        </apex:outputpanel> 
+        
+        <apex:pageBlock Id="thePageBlock">
+        
+        <apex:actionRegion >
+            <apex:actionRegion >
+            <apex:actionRegion >
+                <apex:pageMessages Id="msgId" escape="false"/>
+                
+                <!-- Begining of the Parent Search criteria Section -->
+                
+                <apex:outputPanel id="searchPanel" rendered="{!IsDataInvalid}">
+                    <apex:pageBlockSection title="{!objSettings.Search_Section_Title__c}" columns="3">
+                        <apex:repeat value="{!listParentSearchFieldMember}"
+                            var="strParentFileds" id="parentRepeatId">
+                            <apex:inputField value="{!objParentSobject[strParentFileds.FieldPath]}" required="{!OR(strParentFileds.required, strParentFileds.dbrequired)}"/>
+                        </apex:repeat>
+                    </apex:pageBlockSection>
+                    
+                    <apex:pageBlockSection title="Range Search for {!strSearchFieldLabel}" columns="3" rendered="{!isSearchRangeEnabled}">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel for="startRangeId" value="{!strSearchFieldLabel} From:"/> <apex:inputtext id="startRangeId" value="{!strStartRange}"/> 
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel for="endRangeId" value="{!strSearchFieldLabel} To:"/> <apex:inputtext id="endRangeId" value="{!strEndRange}"/>
+                        </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+                    <br />
+                    <apex:commandButton value="Search" style="margin-left:40%;" action="{!SearchParentRecords}" 
+                        status="statusBar" rerender="msgId, recordSelectionPanel , ChildRecordSectionId, addBtnId,addDefaultBtnId"/>
+                    <apex:commandButton value="Cancel" action="{!cancelSearch}" rerender="searchPanel" style="margin-left:2%;" status="statusBar" immediate="true"/>
+<!--                     <apex:actionFunction name="AddChildRows" action="{!addRow}" rerender="ChildRecordSectionId , msgId" status="WaitingStatus"/> -->
+                    
+                    <apex:actionFunction name="RemoveChildRow" action="{!removeChildRecord}" rerender="ChildRecordSectionId">
+                         <apex:param value="" name="idToDel" assignTo="{!IndexNumber}"/>
+                    </apex:actionFunction>
+                </apex:outputPanel>
+                
+                <!-- End of the Parent Search criteria Section -->
+                
+                <!-- Begining of the Parent Record Selection Section -->
+                
+                
+                
+                <apex:outputPanel id="recordSelectionPanel" rendered="{!IsDataInvalid}">
+                    <apex:pageBlockSection title="{!objSettings.Record_Selection_Title__c}" columns="1" 
+                        id="RecordSelectionRegionId" rendered="{!IF(listParentRecords.size > 0 , true, false)}">
+                        
+                        <apex:pageBlockTable value="{!listParentRecords}" var="strParentRecord" id="theTableId">
+                            
+                            <apex:column >
+                                <apex:facet name="header">
+                                    <apex:inputCheckbox onclick="selectAllCheckboxes(this,'theCheckbox')" id="inputcheckId"/>
+                                </apex:facet>
+                                <apex:inputCheckbox value="{!strParentRecord.isSelected}" id="theCheckbox"/>
+                            </apex:column>
+                           
+                            
+<!--                             <apex:column headerValue="{!strLookUpFieldLabel}"> -->
+<!--                                 <apex:outputText value="{!strParentRecord.strSobjNameValue}"/> -->
+<!--                             </apex:column> -->
+                            
+                            <apex:repeat value="{!listParentFieldMember}"
+                                var="parentFieldLabel">
+                                <apex:column >
+                                    <apex:facet name="header">
+                                    <apex:commandLink action="{!ViewData}"  value="{!parentFieldLabel.Label}{!IF(sortExpression == parentFieldLabel ,IF(sortDirection='ASC','▲','▼'),'')}" 
+                                    status="statusBar" reRender="recordSelectionPanel">
+                                     <apex:param value="{!parentFieldLabel}"  name="column" assignTo="{!sortExpression}" ></apex:param>
+                                   </apex:commandLink>
+                                </apex:facet>
+                                <apex:outputField value="{!strParentRecord.sObjParent[parentFieldLabel.FieldPath]}" />
+                                </apex:column>
+                                
+                            </apex:repeat>
+                            
+                        </apex:pageBlockTable>
+                        
+                        <apex:outputPanel style="margin-left:40%;">
+                            <apex:commandLink value="Prev" action="{!showPreviousPage}" status="statusBar"
+                                reRender="RecordSelectionRegionId" rendered="{!isVisiblePrevious}"/> &nbsp; &nbsp; &nbsp;
+                            <apex:commandLink value="Next" action="{!showNextPage}" onComplete="DeselectCheckBoxOnNextPage();" status="statusBar"
+                                reRender="RecordSelectionRegionId" rendered="{!isVisibleNext}"/>    
+                        </apex:outputPanel>
+                        
+                    </apex:pageBlockSection>
+                </apex:outputPanel>
+                
+                <!-- End of the Parent Record Selection Section -->
+            </apex:actionRegion>
+            
+            <!-- Begining of the Default Setting Section -->
+            
+            <apex:outputPanel id="defaultSettingPanel" rendered="{!IsDataInvalid}">
+                
+                <apex:pageBlockSection title="{!objSettings.Default_options_section_Title__c}" columns="3">
+                    
+                    <apex:repeat value="{!listDefaultFieldMember}"
+                        var="strDefaultChildFileds" id="childDefaultRepeatId">
+                        <apex:inputField value="{!objChildSobject[strDefaultChildFileds.FieldPath]}" required="{!OR(strDefaultChildFileds.required, strDefaultChildFileds.dbrequired)}"/>
+                    </apex:repeat>
+                    
+                </apex:pageBlockSection>
+                
+                <apex:commandButton value=" Preview Records " action="{!addRowWithDefault}" rerender="ChildRecordSectionId ,msgId" 
+                 status="statusBar" id="addDefaultBtnId"
+                 style="margin-left:38%;" disabled="{!isBtnDisabled}"/> 
+            </apex:outputPanel>
+            
+            <!-- End of the Parent Record Selection Section -->
+            
+            </apex:actionRegion>
+            
+            <!-- Begining of the Child Record Section -->
+            
+            <apex:outputPanel id="ChildRecordSectionId" rendered="{!IsDataInvalid}">
+                <apex:pageMessages Id="msgId1" rendered="{!isVisible}"/>
+                <apex:pageBlockSection title="{!objSettings.Child_Record_List_Title__c}" columns="1" rendered="{!isChildRecordSectionVisible}" id="childRecordRegionId">
+                    
+                    <apex:pageBlockTable value="{!listWrapperChildRecordsToInsert}" var="InstWrapperChild" id="ChildRecordTableId" rendered="{!IF(listWrapperChildRecordsToInsert.size > 0 , true, false)}">
+                        <apex:column >
+                            <apex:outputText value=""/>
+                        </apex:column>
+                        <apex:column headerValue="Action" rendered="{! IF(listWrapperChildRecordsToInsert.size > 1 , true , false)}">
+                            <apex:commandLink value="Remove" action="{!removeChildRecord}" rerender="ChildRecordSectionId" status="statusBar" immediate="true">
+                                <apex:param value="{!InstWrapperChild.rowIndex}" name="idToDel" assignTo="{!IndexNumber}"/>
+                            </apex:commandLink>
+                        </apex:column>
+                        <apex:column headerValue="{!strLookUpFieldLabel}" >
+                            <apex:inputField value="{!InstWrapperChild.sObjChild[objSettings.Lookup_Relationship_field__c]}" />
+                        </apex:column>
+                        <apex:repeat value="{!listDefaultFieldMember}"
+                            var="strChildFileds">
+                            <apex:column headerValue="{!strChildFileds.Label}">
+                                <apex:inputField value="{!InstWrapperChild.sObjChild[strChildFileds.FieldPath]}" required="{!OR(strChildFileds.required, strChildFileds.dbrequired)}"/>
+                            </apex:column>
+                        </apex:repeat>
+                         
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+                <apex:outputPanel rendered="{!IF(listWrapperChildRecordsToInsert.size > 0 , true, false)}">
+                    <apex:commandButton value="  Add Row " action="{!addBlankRow}"
+                        style="margin-left:30%;" rerender="ChildRecordSectionId, recordSelectionPanel, defaultSettingPanel" status="statusBar" immediate="true"/>
+                    <apex:commandButton value=" Save " action="{!SaveChildRecords}"
+                        style="margin-left:2%;margin-right:2%;" rerender="ChildRecordSectionId, recordSelectionPanel, defaultSettingPanel" status="statusBar"/>
+                    <apex:commandButton value="  Cancel  " action="{!cancelSearch}" rerender="searchPanel" style="margin-right:30%;" status="statusBar" immediate="true"/>
+                </apex:outputPanel>
+                
+                <!-- Begining of the Inserted Child Record Section -->
+                
+                <apex:pageBlockTable value="{!listChildRecords}" var="objChild"  rendered="{!IF(listChildRecords.size > 0 , true, false)}">
+                <apex:repeat value="{!listChildSelectionFieldMember}" var="strChildFileds">
+                    <apex:column headerValue="{!strChildFileds.Label}">
+                        <apex:outputText value="{!objChild[strChildFileds.FieldPath]}"/>
+                    </apex:column>
+                </apex:repeat>
+            </apex:pageBlockTable>
+            
+            <!-- End of the Inserted Child Record Section -->
+            
+            </apex:outputPanel>
+            
+            <!-- End of the Child Record Section -->
+            </apex:actionRegion>
+            
+        </apex:pageBlock>
+     
+    </apex:form>
+    
+</apex:page>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>LOOKUP_FIELD_NOT_SPECIFIED</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>LOOKUP FIELD NOT SPECIFIED</shortDescription>
+        <value>Look-up relationship field not specified on Settings object.</value>
+    </labels>
+    <labels>
+        <fullName>NO_RECORDS_FOUND</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NO RECORDS FOUND</shortDescription>
+        <value>No records found matching search criteria</value>
+    </labels>
+    <labels>
+        <fullName>Processing</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Processing</shortDescription>
+        <value>Processing...</value>
+    </labels>
+    <labels>
+        <fullName>SPECIFY_SEARCH_CRITERIA</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>SPECIFY SEARCH CRITERIA</shortDescription>
+        <value>Please specify at least one search criteria</value>
+    </labels>
+    <labels>
+        <fullName>STR_SUCCESS</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>STR SUCCESS</shortDescription>
+        <value>Record saved successfully !</value>
+    </labels>
+</CustomLabels>

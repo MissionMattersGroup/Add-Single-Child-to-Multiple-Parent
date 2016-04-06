@@ -1,0 +1,213 @@
+<apex:page controller="setFieldValueController" action="{!viewFieldSetForParentChild}" tabStyle="Bulk_Entry_Settings__c" id="thePageId">
+    
+    <head>
+    <style>
+       #disablingDiv{       
+          display: none;
+          z-index:1001;            
+          position: fixed ;
+          top: 0%;
+          left: 0%;
+          width: 100%;
+          height: 130%;
+         /* make it white but fully transparent */
+          background-color: #6D7B8D;
+          opacity:.20;
+          filter: alpha(opacity=20);
+        }  
+        #loadingImage{
+          top: 260px;           
+          left: 600px; 
+          width: 100px;    
+          z-index:1001;  
+          position:absolute;
+        }         
+    </style>
+    
+    <script>
+    
+        /* javascript  function to freeze backgroung while processing records from the page.*/
+        function DisableBackground() {             
+          document.getElementById('disablingDiv').style.display='block';   
+          return false;    
+        }
+        
+        /* javascript  function to unfreeze backgroung after processing records from the page.*/
+        function EnableBackground() {
+            document.getElementById('disablingDiv').style.display='none'; 
+            return false; 
+        }
+        
+        /* javascript  function to change all checkbox on check/unchack of single checkbox.*/
+        function selectAllCheckboxes(obj,receivedInputID){
+            var inputCheckBox = document.getElementsByTagName("input");
+            for(var i=0; i<inputCheckBox.length; i++){
+                if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){
+                    inputCheckBox[i].checked = obj.checked;
+                }
+            }
+        }
+        
+         /* javascript  function to uncheck a checkbox on click of next link on page.*/
+        function DeselectCheckBoxOnNextPage() {
+            var selectedInputCheckBox = document.getElementById('thePageId:formId:thePageBlock:RecordSelectionRegionId:theTableId:inputcheckId');
+            if(selectedInputCheckBox.checked) {
+                selectedInputCheckBox.checked = false;
+            }
+        }
+        
+    </script> 
+    </head>
+    
+    <apex:sectionHeader title="{!strTitle}" subtitle="{!strSubtitle}" />
+    
+    <apex:form id="formId">
+    
+        <div id="disablingDiv" ></div> 
+        <div id="loadingImage">   
+            <apex:actionStatus id="WaitingStatus">    
+                <apex:facet name="start">
+                    <img src="/img/loading.gif" />&nbsp;
+                    <strong> {!$Label.Processing} </strong>
+                </apex:facet>
+            </apex:actionStatus>
+        </div>
+        
+        <apex:pageBlock Id="thePageBlock">
+        
+        <apex:actionRegion >
+            <apex:actionRegion >
+            <apex:actionRegion >
+                <apex:pageMessages Id="msgId" escape="false"/>
+                
+                <!-- Begining of the Parent Search criteria Section -->
+                
+                <apex:outputPanel id="searchPanel" rendered="{!IsDataInvalid}">
+                    <apex:pageBlockSection title="{!objSettings.Search_Section_Title__c}" columns="3">
+                        <apex:repeat value="{!listParentSearchFieldMember}"
+                            var="strParentFileds" id="parentRepeatId">
+                            <apex:inputField value="{!objParentSobject[strParentFileds.FieldPath]}"/>
+                        </apex:repeat>
+                    </apex:pageBlockSection>
+                    <br />
+                    <apex:commandButton value="Search" style="margin-left:40%;" onClick="DisableBackground();" action="{!SearchParentRecords}" onComplete="EnableBackground();" 
+                        status="WaitingStatus" rerender="msgId, recordSelectionPanel , ChildRecordSectionId, addBtnId,addDefaultBtnId "/>
+                    <apex:actionFunction name="AddChildRows" action="{!addRow}" rerender="ChildRecordSectionId , msgId" status="WaitingStatus"/>
+                    <apex:actionFunction name="RemoveChildRow" action="{!removeChildRecord}" rerender="ChildRecordSectionId">
+                         <apex:param value="" name="idToDel" assignTo="{!IndexNumber}"/>
+                    </apex:actionFunction>
+                </apex:outputPanel>
+                
+                <!-- End of the Parent Search criteria Section -->
+                
+                <!-- Begining of the Parent Record Selection Section -->
+                
+                <apex:outputPanel id="recordSelectionPanel" rendered="{!IsDataInvalid}">
+                    <apex:pageBlockSection title="{!objSettings.Record_Selection_Title__c}" columns="1" 
+                        id="RecordSelectionRegionId" rendered="{!IF(listParentRecords.size > 0 , true, false)}">
+                        <apex:pageBlockTable value="{!listParentRecords}" var="strParentRecord" id="theTableId">
+                            
+                            <apex:column >
+                                <apex:facet name="header">
+                                    <apex:inputCheckbox onclick="selectAllCheckboxes(this,'theCheckbox')" id="inputcheckId"/>
+                                </apex:facet>
+                                <apex:inputCheckbox value="{!strParentRecord.isSelected}" id="theCheckbox"/>
+                            </apex:column>
+                            
+                            <apex:column headerValue="{!objSettings.Lookup_Relationship_field__c}">
+                                <apex:outputText value="{!strParentRecord.strSobjNameValue}"/>
+                            </apex:column>
+                            
+                            <apex:repeat value="{!listParentFieldMember}"
+                                var="parentFieldLabel">
+                                <apex:column value="{!strParentRecord.sObjParent[parentFieldLabel.FieldPath]}" />
+                            </apex:repeat>
+                        </apex:pageBlockTable>
+                        <apex:outputPanel style="margin-left:40%;">
+                            <apex:commandLink value="Prev" onClick="DisableBackground();" action="{!showPreviousPage}" onComplete="EnableBackground();" status="WaitingStatus" 
+                                reRender="RecordSelectionRegionId" rendered="{!isVisiblePrevious}"/> &nbsp; &nbsp; &nbsp;
+                            <apex:commandLink value="Next" onClick="DisableBackground();" action="{!showNextPage}" onComplete="DeselectCheckBoxOnNextPage();EnableBackground();" status="WaitingStatus" 
+                                reRender="RecordSelectionRegionId" rendered="{!isVisibleNext}"/>    
+                        </apex:outputPanel>
+                        
+                    </apex:pageBlockSection>
+                </apex:outputPanel>
+                
+                <!-- End of the Parent Record Selection Section -->
+            </apex:actionRegion>
+            
+            <!-- Begining of the Default Setting Section -->
+            
+            <apex:outputPanel id="defaultSettingPanel" rendered="{!IsDataInvalid}">
+                
+                <apex:pageBlockSection title="{!objSettings.Default_options_section_Title__c}" columns="3">
+                    
+                    <apex:repeat value="{!listDefaultFieldMember}"
+                        var="strDefaultChildFileds" id="childDefaultRepeatId">
+                        <apex:inputField value="{!objChildSobject[strDefaultChildFileds.FieldPath]}"/>
+                    </apex:repeat>
+                    
+                </apex:pageBlockSection>
+               
+                <apex:commandButton value=" Add with Default Values " action="{!addRowWithDefault}" rerender="ChildRecordSectionId , msgId" status="WaitingStatus" onClick="DisableBackground();" onComplete="EnableBackground();" id="addDefaultBtnId"
+                 style="margin-left:32%;" disabled="{!isBtnDisabled}"/>
+                    
+                <apex:commandButton value="  Add  " onClick="DisableBackground(); AddChildRows();"  onComplete="EnableBackground();" id="addBtnId" style="margin-left:2%;margin-right:32%;" disabled="{!isBtnDisabled}" />
+            </apex:outputPanel>
+            
+            <!-- End of the Parent Record Selection Section -->
+            
+            </apex:actionRegion>
+            
+            <!-- Begining of the Child Record Section -->
+            
+            <apex:outputPanel id="ChildRecordSectionId" rendered="{!IsDataInvalid}">
+                <apex:pageBlockSection title="{!objSettings.Child_Record_List_Title__c}" columns="1" rendered="{!isChildRecordSectionVisible}">
+                    <apex:pageMessages Id="msgId1" rendered="{!isVisible}"/>
+                    <apex:pageBlockTable value="{!listWrapperChildRecordsToInsert}" var="InstWrapperChild" id="ChildRecordTableId" rendered="{!IF(listWrapperChildRecordsToInsert.size > 0 , true, false)}">
+                        <apex:column headerValue="{!objSettings.Lookup_Relationship_field__c}" >
+                            <apex:inputField value="{!InstWrapperChild.sObjChild[objSettings.Lookup_Relationship_field__c]}" />
+                        </apex:column>
+                        <apex:repeat value="{!listDefaultFieldMember}"
+                            var="strChildFileds">
+                            <apex:column headerValue="{!strChildFileds.Label}">
+                                <apex:inputField value="{!InstWrapperChild.sObjChild[strChildFileds.FieldPath]}"/>
+                            </apex:column>
+                        </apex:repeat>
+                        <apex:column headerValue="Action" rendered="{! IF(listWrapperChildRecordsToInsert.size > 1 , true , false)}">
+                            <apex:commandLink value="Remove" onClick="DisableBackground();"  action="{!removeChildRecord}" rerender="ChildRecordSectionId" onComplete="EnableBackground();" status="WaitingStatus" immediate="true">
+                                <apex:param value="{!InstWrapperChild.rowIndex}" name="idToDel" assignTo="{!IndexNumber}"/>
+                            </apex:commandLink>
+                        </apex:column> 
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+                <apex:outputPanel rendered="{!IF(listWrapperChildRecordsToInsert.size > 0 , true, false)}">
+                    <apex:commandButton value="  Add Row " onClick="DisableBackground();" action="{!addBlankRow}" onComplete="EnableBackground();"
+                        style="margin-left:30%;" rerender="ChildRecordSectionId, recordSelectionPanel, defaultSettingPanel" status="WaitingStatus" immediate="true"/>
+                    <apex:commandButton value=" Save " onClick="DisableBackground();" action="{!SaveChildRecords}" onComplete="EnableBackground();"
+                        style="margin-left:2%;margin-right:2%;" rerender="ChildRecordSectionId, recordSelectionPanel, defaultSettingPanel" status="WaitingStatus"/>
+                    <apex:commandButton value="  Cancel  " action="{!CancelRecordSelection}" style="margin-right:30%;" />
+                </apex:outputPanel>
+                
+                <!-- Begining of the Inserted Child Record Section -->
+                
+                <apex:pageBlockTable value="{!listChildRecords}" var="objChild"  rendered="{!IF(listChildRecords.size > 0 , true, false)}">
+                <apex:repeat value="{!listChildSelectionFieldMember}" var="strChildFileds">
+                    <apex:column headerValue="{!strChildFileds.Label}">
+                        <apex:outputText value="{!objChild[strChildFileds.FieldPath]}"/>
+                    </apex:column>
+                </apex:repeat>
+            </apex:pageBlockTable>
+            
+            <!-- End of the Inserted Child Record Section -->
+            
+            </apex:outputPanel>
+            
+            <!-- End of the Child Record Section -->
+            </apex:actionRegion>
+            
+        </apex:pageBlock>
+        
+    </apex:form>
+    
+</apex:page>

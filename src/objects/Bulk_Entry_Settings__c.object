@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <deprecated>false</deprecated>
+    <description>Holds the configuration details for rendering the fields on the dynamic Visualforce page.</description>
+    <enableActivities>false</enableActivities>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>false</enableReports>
+    <fields>
+        <fullName>Cancel_URL_Link__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Cancel URL Link</label>
+        <required>false</required>
+        <type>Url</type>
+    </fields>
+    <fields>
+        <fullName>Child_Object__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Name of the Child Sobject whose records need to be displayed in the Parent Section Summary.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Name of the Child Sobject whose records need to be displayed in the Parent Section Summary.</inlineHelpText>
+        <label>Child Object</label>
+        <length>40</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Child_Record_List_Field_Set__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Name of the Fieldset created for the Child Record List.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Name of the Fieldset created for the Child Record List.</inlineHelpText>
+        <label>Child Record List Field Set</label>
+        <length>50</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Child_Record_List_Title__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Text to display on the Child Section Summary when the page is rendered.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Text to display on the Child Section Summary when the page is rendered.</inlineHelpText>
+        <label>Child Record List Title</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Default_Record_Size__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Default Record Size</label>
+        <picklist>
+            <picklistValues>
+                <fullName>10</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>25</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>50</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>100</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Default_Settings_Field_Set__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Name of the Fieldset created for the Default Setting.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Name of the Fieldset created for the Default Setting.</inlineHelpText>
+        <label>Default Settings Field Set</label>
+        <length>50</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Default_options_section_Title__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Text to display on the Default Option Section Summary when the page is rendered.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Text to display on the Default Option Section Summary when the page is rendered.</inlineHelpText>
+        <label>Default options section Title</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Display_Name__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>Parent_Object__c &amp; &quot;_&quot; &amp;  Child_Object__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Display Name</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Include_Range_Search__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Include Range Search?</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Lookup_Relationship_field__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Lookup Relationship field</label>
+        <length>40</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Parent_List_Field_Set__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Name of the Fieldset created for the Parent Sobject.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Name of the Fieldset created for the Parent Sobject.</inlineHelpText>
+        <label>Parent List Field Set</label>
+        <length>50</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Parent_Object__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Name of the Parent Sobject whose records need to be displayed in the Parent Section Summary.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Name of the Parent Sobject whose records need to be displayed in the Parent Section Summary.</inlineHelpText>
+        <label>Parent Object</label>
+        <length>40</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Range_Field__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Range Field</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Record_Selection_Title__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Text to display on the Parent Section Summary when the page is rendered.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Text to display on the Parent Section Summary when the page is rendered.</inlineHelpText>
+        <label>Record Selection Title</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Search_Criteria_Field_Set__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Name of the Fieldset created for the Search Criteria.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Name of the Fieldset created for the Search Criteria.</inlineHelpText>
+        <label>Search Criteria Field Set</label>
+        <length>50</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Search_Section_Title__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Text to display on the Search Section Summary when the page is rendered.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Text to display on the Search Section Summary when the page is rendered.</inlineHelpText>
+        <label>Search Section Title</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>Bulk Entry Setting</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Parent_Object__c</columns>
+        <columns>Child_Object__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <displayFormat>BES-{MM}{DD}{YY}{000000}</displayFormat>
+        <label>Bulk Entry Setting Name</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Bulk Entry Settings</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

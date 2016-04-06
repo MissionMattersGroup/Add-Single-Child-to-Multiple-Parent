@@ -1,0 +1,7 @@
+<apex:component controller="CustomInputFieldComponentController">
+	<apex:attribute name="fieldName" type="String" description="Field Name of the sObject"/>
+	<apex:attribute name="fieldValue" type="String" description="Field value of the sObject"/>
+	<apex:attribute name="fieldType" type="String" description="Field type of the sObject"/>
+	<apex:attribute name="fieldRequired" type="Boolean" description="Is Field required on the sObject"/>
+	<apex:attribute name="fieldRequiredOnFieldSet" type="Boolean" description="Is Field required for fieldSets on the sObject"/>
+</apex:component>
